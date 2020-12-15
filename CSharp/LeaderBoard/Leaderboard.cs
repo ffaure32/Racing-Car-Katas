@@ -13,24 +13,7 @@ namespace TDDMicroExercises.LeaderBoard
 
         public Dictionary<string, int> DriverResults()
         {
-            var results = new Dictionary<string, int>();
-            foreach (var race in _races)
-            {
-                foreach (var driver in race.Results)
-                {
-                    var driverName = race.GetDriverName(driver);
-                    var points = race.GetPoints(driver);
-                    if (results.ContainsKey(driverName))
-                    {
-                        results[driverName] = results[driverName] + points;
-                    }
-                    else
-                    {
-                        results.Add(driverName, 0 + points);
-                    }
-                }
-            }
-            return results;
+            return new DriverResultComputer().DriverResults(_races);
         }
 
         public List<string> DriverRankings()

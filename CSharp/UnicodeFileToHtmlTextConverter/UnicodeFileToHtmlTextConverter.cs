@@ -4,21 +4,20 @@ namespace TDDMicroExercises.UnicodeFileToHtmlTextConverter
 {
     public class UnicodeFileToHtmlTextConverter
     {
-        private string _fullFilenameWithPath;
+        private IUnicodeTextProvider _textProvider;
 
-        public UnicodeFileToHtmlTextConverter(string fullFilenameWithPath)
+        public UnicodeFileToHtmlTextConverter(string fullFilenameWithPath) : this(new UnicodeTextProviderFromFileSystem(fullFilenameWithPath))
         {
-            _fullFilenameWithPath = fullFilenameWithPath;
         }
 
-        public string GetFilename()
+        public UnicodeFileToHtmlTextConverter(IUnicodeTextProvider textProvider)
         {
-            return _fullFilenameWithPath;
+            _textProvider = textProvider;
         }
 
         public string ConvertToHtml()
         {
-            using (TextReader unicodeFileStream = File.OpenText(_fullFilenameWithPath))
+            using (TextReader unicodeFileStream = _textProvider.GetTextReader())
             {
                 string html = string.Empty;
 
@@ -34,6 +33,27 @@ namespace TDDMicroExercises.UnicodeFileToHtmlTextConverter
             }
         }
     }
+
+    public class UnicodeTextProviderFromFileSystem : IUnicodeTextProvider
+    {
+        private readonly string _fullFilenameWithPath;
+
+        public UnicodeTextProviderFromFileSystem(string fullFilenameWithPath)
+        {
+            _fullFilenameWithPath = fullFilenameWithPath;
+        }
+
+        public TextReader GetTextReader()
+        {
+            return File.OpenText(_fullFilenameWithPath);
+        }
+    }
+
+    public interface IUnicodeTextProvider
+    {
+        TextReader GetTextReader();
+    }
+
     class HttpUtility
     {
         public static string HtmlEncode(string line)
